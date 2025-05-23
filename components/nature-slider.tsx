@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react"
 import Image from "next/image"
-import { ChevronLeft, ChevronRight, Pause, Play, Maximize2, Minimize2, Eye, EyeOff } from "lucide-react"
+import { ChevronLeft, ChevronRight, Pause, Play, Maximize2, Minimize2, Eye, EyeOff, Text } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
@@ -22,6 +22,7 @@ export function NatureSlider() {
   const [isAnimating, setIsAnimating] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [isCarouselVisible, setIsCarouselVisible] = useState(true)
+  const [isTitleVisible, setIsTitleVisible] = useState(true)
   // Auto-play timer ref - temporarily disabled
   // const timerRef = useRef<NodeJS.Timeout | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -194,6 +195,7 @@ export function NatureSlider() {
               className={cn(
                 "absolute top-1/4 left-[10%] max-w-md text-white z-20 transition-all duration-500",
                 isAnimating ? "opacity-0 translate-y-10" : "opacity-100 translate-y-0",
+                !isTitleVisible && "opacity-0 translate-y-10 pointer-events-none"
               )}
               style={{
                 transitionDelay: isAnimating ? "0ms" : "300ms",
@@ -295,6 +297,17 @@ export function NatureSlider() {
           ) : (
             <Eye className="h-6 w-6" />
           )}
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          className={cn(
+            "bg-white/10 backdrop-blur-sm border-white text-white hover:bg-white/30",
+            !isTitleVisible && "opacity-50"
+          )}
+          onClick={() => setIsTitleVisible(prev => !prev)}
+        >
+          <Text className="h-6 w-6" />
         </Button>
         <Button
           variant="outline"
