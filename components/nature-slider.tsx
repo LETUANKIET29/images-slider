@@ -6,6 +6,8 @@ import { ChevronLeft, ChevronRight, Pause, Play, Maximize2, Minimize2, Eye, EyeO
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
+// Define the structure for each slide in the nature slider
+// Định nghĩa cấu trúc cho mỗi slide trong nature slider
 interface NatureSlide {
   id: number
   title: string
@@ -13,20 +15,24 @@ interface NatureSlide {
 }
 
 export function NatureSlider() {
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [slides, setSlides] = useState<NatureSlide[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  // State management for the slider
+  // Quản lý state cho slider
+  const [currentIndex, setCurrentIndex] = useState(0)        // Current slide index / Vị trí slide hiện tại
+  const [slides, setSlides] = useState<NatureSlide[]>([])    // Array of all slides / Mảng chứa tất cả slides
+  const [isLoading, setIsLoading] = useState(true)           // Loading state / Trạng thái đang tải
   // Auto-play state - temporarily disabled
   // const [isAutoPlaying, setIsAutoPlaying] = useState(true)
-  const [direction, setDirection] = useState("next")
-  const [isAnimating, setIsAnimating] = useState(false)
-  const [isFullscreen, setIsFullscreen] = useState(false)
-  const [isCarouselVisible, setIsCarouselVisible] = useState(true)
-  const [isTitleVisible, setIsTitleVisible] = useState(true)
+  const [direction, setDirection] = useState("next")         // Slide transition direction / Hướng chuyển slide
+  const [isAnimating, setIsAnimating] = useState(false)      // Animation state / Trạng thái animation
+  const [isFullscreen, setIsFullscreen] = useState(false)    // Fullscreen mode / Chế độ toàn màn hình
+  const [isCarouselVisible, setIsCarouselVisible] = useState(true)  // Carousel visibility / Hiển thị carousel
+  const [isTitleVisible, setIsTitleVisible] = useState(true) // Title visibility / Hiển thị tiêu đề
   // Auto-play timer ref - temporarily disabled
   // const timerRef = useRef<NodeJS.Timeout | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
+  // Fetch slides data when component mounts
+  // Lấy dữ liệu slides khi component được mount
   useEffect(() => {
     const fetchSlides = async () => {
       try {
@@ -45,6 +51,8 @@ export function NatureSlider() {
     fetchSlides()
   }, [])
 
+  // Toggle fullscreen mode
+  // Chuyển đổi chế độ toàn màn hình
   const toggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
       containerRef.current?.requestFullscreen()
@@ -55,6 +63,8 @@ export function NatureSlider() {
     }
   }, [])
 
+  // Listen for fullscreen changes
+  // Lắng nghe sự thay đổi chế độ toàn màn hình
   useEffect(() => {
     const handleFullscreenChange = () => {
       setIsFullscreen(!!document.fullscreenElement)
@@ -66,6 +76,8 @@ export function NatureSlider() {
     }
   }, [])
 
+  // Navigate to a specific slide with animation
+  // Điều hướng đến một slide cụ thể với animation
   const goToSlide = useCallback(
     (index: number, dir: "next" | "prev") => {
       if (isAnimating || slides.length === 0) return
@@ -74,6 +86,8 @@ export function NatureSlider() {
       setDirection(dir)
       setCurrentIndex(index)
 
+      // Reset animation state after transition
+      // Đặt lại trạng thái animation sau khi chuyển đổi
       setTimeout(() => {
         setIsAnimating(false)
       }, 800)
@@ -81,44 +95,48 @@ export function NatureSlider() {
     [isAnimating, slides.length],
   )
 
+  // Navigate to next slide
+  // Điều hướng đến slide tiếp theo
   const nextSlide = useCallback(() => {
     if (slides.length === 0) return
     const newIndex = (currentIndex + 1) % slides.length
     goToSlide(newIndex, "next")
   }, [currentIndex, goToSlide, slides.length])
 
+  // Navigate to previous slide
+  // Điều hướng đến slide trước đó
   const prevSlide = useCallback(() => {
     if (slides.length === 0) return
     const newIndex = (currentIndex - 1 + slides.length) % slides.length
     goToSlide(newIndex, "prev")
   }, [currentIndex, goToSlide, slides.length])
 
+  // Show loading state if no slides
+  // Hiển thị trạng thái loading nếu không có slides
   if (slides.length === 0) {
     return <div>Loading...</div>
   }
 
-  // Calculate previous and next indices for animation
+  // Calculate indices for previous and next slides
+  // Tính toán chỉ số cho slides trước và sau
   const prevIndex = (currentIndex - 1 + slides.length) % slides.length
   const nextIndex = (currentIndex + 1) % slides.length
 
   // Get current slide data
+  // Lấy dữ liệu slide hiện tại
   const currentSlide = slides[currentIndex]
 
-  // Get the other two images for the cards (different from current background)
+  // Get images for the carousel cards
+  // Lấy ảnh cho các card trong carousel
   const getCardImages = (currentImageSrc: string) => {
-    // Get current slide index
-    const currentSlideIndex = slides.findIndex(slide => slide.src === currentImageSrc);
-    
-    // Calculate previous and next indices
-    const prevIndex = (currentSlideIndex - 1 + slides.length) % slides.length;
-    const nextIndex = (currentSlideIndex + 1) % slides.length;
-    
-    // Return images in the correct order: [previous, current, next]
+    const currentSlideIndex = slides.findIndex(slide => slide.src === currentImageSrc)
+    const prevIndex = (currentSlideIndex - 1 + slides.length) % slides.length
+    const nextIndex = (currentSlideIndex + 1) % slides.length
     return [
       slides[prevIndex].src,
       currentImageSrc,
       slides[nextIndex].src
-    ];
+    ]
   }
 
   // Auto-play functionality - temporarily disabled
@@ -148,6 +166,8 @@ export function NatureSlider() {
   */
 
   return (
+    // Main container with responsive classes
+    // Container chính với các class responsive
     <div 
       ref={containerRef}
       className={cn(
@@ -156,6 +176,7 @@ export function NatureSlider() {
       )}
     >
       {/* Background slides with animation */}
+      {/* Slides nền với animation */}
       <div className="relative w-full h-full">
         {slides.map((slide, index) => (
           <div
@@ -178,19 +199,22 @@ export function NatureSlider() {
                 index === currentIndex ? 1 : index === prevIndex || index === nextIndex ? (isAnimating ? 1 : 0) : 0,
             }}
           >
+            {/* Main background image with optimization */}
+            {/* Ảnh nền chính với tối ưu hóa */}
             <Image
               src={slide.src || "/placeholder.svg"}
               alt={slide.title}
               fill
               priority={index === 0}
-              quality={75}
-              sizes="100vw"
+              quality={index === 0 ? 75 : 60}
+              sizes="(max-width: 640px) 640px, (max-width: 768px) 768px, (max-width: 1024px) 1024px, 1920px"
               className="object-cover"
               placeholder="blur"
               blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDABQODxIPDRQSEBIXFRQdHx4eHRoaHSQtJSEkMjU1LS0yMi4qLjgyPj4+ODU8PkZFRk5PT1VWV1dXV1dXV1f/2wBDAR4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
             />
 
             {/* Text overlay with animation */}
+            {/* Lớp phủ văn bản với animation */}
             <div
               className={cn(
                 "absolute top-[15%] sm:top-1/4 left-[5%] sm:left-[10%] max-w-[90%] sm:max-w-md text-white z-20 transition-all duration-500",
@@ -205,6 +229,7 @@ export function NatureSlider() {
             </div>
 
             {/* Main carousel with 3 images */}
+            {/* Carousel chính với 3 ảnh */}
             <div className={cn(
               "absolute bottom-[5%] sm:bottom-[10%] right-[5%] sm:right-[10%] flex items-center z-10 transition-all duration-500",
               !isCarouselVisible && "opacity-0 translate-y-10 pointer-events-none"
@@ -237,15 +262,18 @@ export function NatureSlider() {
                     e.currentTarget.style.boxShadow = ""
                   }}
                 >
+                  {/* Carousel card images with optimization */}
+                  {/* Ảnh card carousel với tối ưu hóa */}
                   <Image
                     src={imageSrc || "/placeholder.svg"}
                     alt={`Nature image ${cardIndex + 1}`}
                     fill
-                    quality={75}
+                    quality={cardIndex === 1 ? 75 : 60}
                     sizes="(max-width: 640px) 80px, (max-width: 768px) 130px, (max-width: 1024px) 180px, 200px"
                     className="object-cover"
                     placeholder="blur"
                     blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDABQODxIPDRQSEBIXFRQdHx4eHRoaHSQtJSEkMjU1LS0yMi4qLjgyPj4+ODU8PkZFRk5PT1VWV1dXV1dXV1f/2wBDAR4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
+                    loading={cardIndex === 1 ? "eager" : "lazy"}
                   />
                 </div>
               ))}
@@ -255,7 +283,10 @@ export function NatureSlider() {
       </div>
 
       {/* Navigation buttons */}
+      {/* Các nút điều hướng */}
       <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 sm:gap-3 z-30">
+        {/* Previous button */}
+        {/* Nút trước */}
         <Button
           variant="outline"
           size="icon"
@@ -264,20 +295,9 @@ export function NatureSlider() {
         >
           <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
         </Button>
-        {/* Auto-play button - temporarily disabled
-        <Button
-          variant="outline"
-          size="icon"
-          className="bg-white/10 backdrop-blur-sm border-white text-white hover:bg-white/30"
-          onClick={toggleAutoPlay}
-        >
-          {isAutoPlaying ? (
-            <Pause className="h-6 w-6" />
-          ) : (
-            <Play className="h-6 w-6" />
-          )}
-        </Button>
-        */}
+
+        {/* Next button */}
+        {/* Nút tiếp */}
         <Button
           variant="outline"
           size="icon"
@@ -286,6 +306,9 @@ export function NatureSlider() {
         >
           <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
         </Button>
+
+        {/* Toggle carousel visibility */}
+        {/* Bật/tắt hiển thị carousel */}
         <Button
           variant="outline"
           size="icon"
@@ -298,6 +321,9 @@ export function NatureSlider() {
             <Eye className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
           )}
         </Button>
+
+        {/* Toggle title visibility */}
+        {/* Bật/tắt hiển thị tiêu đề */}
         <Button
           variant="outline"
           size="icon"
@@ -309,6 +335,9 @@ export function NatureSlider() {
         >
           <Text className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
         </Button>
+
+        {/* Toggle fullscreen mode */}
+        {/* Bật/tắt chế độ toàn màn hình */}
         <Button
           variant="outline"
           size="icon"
