@@ -152,7 +152,7 @@ export function NatureSlider() {
       ref={containerRef}
       className={cn(
         "relative w-full overflow-hidden transition-all duration-300",
-        isFullscreen ? "fixed inset-0 z-50 bg-black" : "h-[600px] md:h-[700px] lg:h-[800px]"
+        isFullscreen ? "fixed inset-0 z-50 bg-black" : "h-screen min-h-[500px]"
       )}
     >
       {/* Background slides with animation */}
@@ -184,7 +184,7 @@ export function NatureSlider() {
               fill
               priority={index === 0}
               quality={75}
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
+              sizes="100vw"
               className="object-cover"
               placeholder="blur"
               blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDABQODxIPDRQSEBIXFRQdHx4eHRoaHSQtJSEkMjU1LS0yMi4qLjgyPj4+ODU8PkZFRk5PT1VWV1dXV1dXV1f/2wBDAR4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
@@ -193,7 +193,7 @@ export function NatureSlider() {
             {/* Text overlay with animation */}
             <div
               className={cn(
-                "absolute top-1/4 left-[10%] max-w-md text-white z-20 transition-all duration-500",
+                "absolute top-[15%] sm:top-1/4 left-[5%] sm:left-[10%] max-w-[90%] sm:max-w-md text-white z-20 transition-all duration-500",
                 isAnimating ? "opacity-0 translate-y-10" : "opacity-100 translate-y-0",
                 !isTitleVisible && "opacity-0 translate-y-10 pointer-events-none"
               )}
@@ -201,26 +201,26 @@ export function NatureSlider() {
                 transitionDelay: isAnimating ? "0ms" : "300ms",
               }}
             >
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">{slide.title}</h2>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold mb-2 sm:mb-4 drop-shadow-lg">{slide.title}</h2>
             </div>
 
             {/* Main carousel with 3 images */}
             <div className={cn(
-              "absolute bottom-[15%] right-[10%] flex items-center z-10 transition-all duration-500",
+              "absolute bottom-[5%] sm:bottom-[10%] right-[5%] sm:right-[10%] flex items-center z-10 transition-all duration-500",
               !isCarouselVisible && "opacity-0 translate-y-10 pointer-events-none"
             )}>
               {getCardImages(slide.src).map((imageSrc, cardIndex) => (
                 <div
                   key={cardIndex}
                   className={cn(
-                    "relative rounded-3xl overflow-hidden shadow-2xl cursor-pointer transition-all duration-700",
-                    cardIndex === 0 && "h-[280px] w-[180px] md:h-[350px] md:w-[220px] z-10 -mr-6 md:-mr-10",
-                    cardIndex === 1 && "h-[320px] w-[200px] md:h-[400px] md:w-[250px] z-20 -mr-6 md:-mr-10",
-                    cardIndex === 2 && "h-[280px] w-[180px] md:h-[350px] md:w-[220px] z-10",
+                    "relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl cursor-pointer transition-all duration-700",
+                    cardIndex === 0 && "h-[120px] w-[80px] sm:h-[200px] sm:w-[130px] md:h-[280px] md:w-[180px] z-10 -mr-2 sm:-mr-4 md:-mr-6",
+                    cardIndex === 1 && "h-[140px] w-[90px] sm:h-[240px] sm:w-[160px] md:h-[320px] md:w-[200px] z-20 -mr-2 sm:-mr-4 md:-mr-6",
+                    cardIndex === 2 && "h-[120px] w-[80px] sm:h-[200px] sm:w-[130px] md:h-[280px] md:w-[180px] z-10",
                     isAnimating && "opacity-0 translate-y-20",
                   )}
                   style={{
-                    transform: `translateY(${cardIndex === 1 ? "-30px" : "0"}) ${isAnimating ? "translateY(20px)" : ""}`,
+                    transform: `translateY(${cardIndex === 1 ? "-10px" : "0"}) ${isAnimating ? "translateY(20px)" : ""}`,
                     transitionDelay: isAnimating ? "0ms" : `${cardIndex * 200 + 400}ms`,
                     opacity: isAnimating ? 0 : 1,
                   }}
@@ -229,11 +229,11 @@ export function NatureSlider() {
                     else if (cardIndex === 2) nextSlide()
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = `translateY(${cardIndex === 1 ? "-40px" : "-10px"}) scale(1.05)`
+                    e.currentTarget.style.transform = `translateY(${cardIndex === 1 ? "-15px" : "-5px"}) scale(1.05)`
                     e.currentTarget.style.boxShadow = "0 25px 50px -12px rgba(0, 0, 0, 0.5)"
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = `translateY(${cardIndex === 1 ? "-30px" : "0"})`
+                    e.currentTarget.style.transform = `translateY(${cardIndex === 1 ? "-10px" : "0"})`
                     e.currentTarget.style.boxShadow = ""
                   }}
                 >
@@ -242,7 +242,7 @@ export function NatureSlider() {
                     alt={`Nature image ${cardIndex + 1}`}
                     fill
                     quality={75}
-                    sizes="(max-width: 768px) 80px, (max-width: 1200px) 220px, 250px"
+                    sizes="(max-width: 640px) 80px, (max-width: 768px) 130px, (max-width: 1024px) 180px, 200px"
                     className="object-cover"
                     placeholder="blur"
                     blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDABQODxIPDRQSEBIXFRQdHx4eHRoaHSQtJSEkMjU1LS0yMi4qLjgyPj4+ODU8PkZFRk5PT1VWV1dXV1dXV1f/2wBDAR4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
@@ -255,14 +255,14 @@ export function NatureSlider() {
       </div>
 
       {/* Navigation buttons */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-4 z-30">
+      <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 sm:gap-3 z-30">
         <Button
           variant="outline"
           size="icon"
-          className="bg-white/10 backdrop-blur-sm border-white text-white hover:bg-white/30"
+          className="bg-white/10 backdrop-blur-sm border-white text-white hover:bg-white/30 h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10"
           onClick={prevSlide}
         >
-          <ChevronLeft className="h-6 w-6" />
+          <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
         </Button>
         {/* Auto-play button - temporarily disabled
         <Button
@@ -281,44 +281,44 @@ export function NatureSlider() {
         <Button
           variant="outline"
           size="icon"
-          className="bg-white/10 backdrop-blur-sm border-white text-white hover:bg-white/30"
+          className="bg-white/10 backdrop-blur-sm border-white text-white hover:bg-white/30 h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10"
           onClick={nextSlide}
         >
-          <ChevronRight className="h-6 w-6" />
+          <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
         </Button>
         <Button
           variant="outline"
           size="icon"
-          className="bg-white/10 backdrop-blur-sm border-white text-white hover:bg-white/30"
+          className="bg-white/10 backdrop-blur-sm border-white text-white hover:bg-white/30 h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10"
           onClick={() => setIsCarouselVisible(prev => !prev)}
         >
           {isCarouselVisible ? (
-            <EyeOff className="h-6 w-6" />
+            <EyeOff className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
           ) : (
-            <Eye className="h-6 w-6" />
+            <Eye className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
           )}
         </Button>
         <Button
           variant="outline"
           size="icon"
           className={cn(
-            "bg-white/10 backdrop-blur-sm border-white text-white hover:bg-white/30",
+            "bg-white/10 backdrop-blur-sm border-white text-white hover:bg-white/30 h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10",
             !isTitleVisible && "opacity-50"
           )}
           onClick={() => setIsTitleVisible(prev => !prev)}
         >
-          <Text className="h-6 w-6" />
+          <Text className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
         </Button>
         <Button
           variant="outline"
           size="icon"
-          className="bg-white/10 backdrop-blur-sm border-white text-white hover:bg-white/30"
+          className="bg-white/10 backdrop-blur-sm border-white text-white hover:bg-white/30 h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10"
           onClick={toggleFullscreen}
         >
           {isFullscreen ? (
-            <Minimize2 className="h-6 w-6" />
+            <Minimize2 className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
           ) : (
-            <Maximize2 className="h-6 w-6" />
+            <Maximize2 className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
           )}
         </Button>
       </div>
