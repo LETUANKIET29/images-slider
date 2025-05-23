@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react"
 import Image from "next/image"
-import { ChevronLeft, ChevronRight, Pause, Play, Maximize2, Minimize2 } from "lucide-react"
+import { ChevronLeft, ChevronRight, Pause, Play, Maximize2, Minimize2, Eye, EyeOff } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
@@ -16,11 +16,14 @@ export function NatureSlider() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [slides, setSlides] = useState<NatureSlide[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true)
+  // Auto-play state - temporarily disabled
+  // const [isAutoPlaying, setIsAutoPlaying] = useState(true)
   const [direction, setDirection] = useState("next")
   const [isAnimating, setIsAnimating] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
-  const timerRef = useRef<NodeJS.Timeout | null>(null)
+  const [isCarouselVisible, setIsCarouselVisible] = useState(true)
+  // Auto-play timer ref - temporarily disabled
+  // const timerRef = useRef<NodeJS.Timeout | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -89,29 +92,6 @@ export function NatureSlider() {
     goToSlide(newIndex, "prev")
   }, [currentIndex, goToSlide, slides.length])
 
-  const toggleAutoPlay = useCallback(() => {
-    setIsAutoPlaying((prev) => !prev)
-  }, [])
-
-  useEffect(() => {
-    if (timerRef.current) {
-      clearInterval(timerRef.current)
-      timerRef.current = null
-    }
-
-    if (isAutoPlaying && !isAnimating && slides.length > 0) {
-      timerRef.current = setInterval(() => {
-        nextSlide()
-      }, 6000)
-    }
-
-    return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current)
-      }
-    }
-  }, [isAutoPlaying, nextSlide, isAnimating, slides.length])
-
   if (slides.length === 0) {
     return <div>Loading...</div>
   }
@@ -139,6 +119,32 @@ export function NatureSlider() {
       slides[nextIndex].src
     ];
   }
+
+  // Auto-play functionality - temporarily disabled
+  /*
+  const toggleAutoPlay = useCallback(() => {
+    setIsAutoPlaying((prev) => !prev)
+  }, [])
+
+  useEffect(() => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current)
+      timerRef.current = null
+    }
+
+    if (isAutoPlaying && !isAnimating && slides.length > 0) {
+      timerRef.current = setInterval(() => {
+        nextSlide()
+      }, 6000)
+    }
+
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current)
+      }
+    }
+  }, [isAutoPlaying, nextSlide, isAnimating, slides.length])
+  */
 
   return (
     <div 
@@ -176,7 +182,11 @@ export function NatureSlider() {
               alt={slide.title}
               fill
               priority={index === 0}
+              quality={75}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
               className="object-cover"
+              placeholder="blur"
+              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDABQODxIPDRQSEBIXFRQdHx4eHRoaHSQtJSEkMjU1LS0yMi4qLjgyPj4+ODU8PkZFRk5PT1VWV1dXV1dXV1f/2wBDAR4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
             />
 
             {/* Text overlay with animation */}
@@ -192,8 +202,11 @@ export function NatureSlider() {
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">{slide.title}</h2>
             </div>
 
-            {/* Overlapping cards with animation - Desktop */}
-            <div className="hidden md:flex absolute bottom-[15%] right-[10%] items-center z-10">
+            {/* Main carousel with 3 images */}
+            <div className={cn(
+              "absolute bottom-[15%] right-[10%] flex items-center z-10 transition-all duration-500",
+              !isCarouselVisible && "opacity-0 translate-y-10 pointer-events-none"
+            )}>
               {getCardImages(slide.src).map((imageSrc, cardIndex) => (
                 <div
                   key={cardIndex}
@@ -226,29 +239,11 @@ export function NatureSlider() {
                     src={imageSrc || "/placeholder.svg"}
                     alt={`Nature image ${cardIndex + 1}`}
                     fill
+                    quality={75}
+                    sizes="(max-width: 768px) 80px, (max-width: 1200px) 220px, 250px"
                     className="object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-
-            {/* Mobile carousel */}
-            <div className="md:hidden absolute bottom-[15%] left-0 right-0 flex items-center justify-center gap-4 z-10 px-4">
-              {slides.map((slide, index) => (
-                <div
-                  key={slide.id}
-                  className={cn(
-                    "relative rounded-xl overflow-hidden shadow-lg cursor-pointer transition-all duration-300",
-                    "h-[120px] w-[80px]",
-                    index === currentIndex && "ring-2 ring-white scale-110"
-                  )}
-                  onClick={() => goToSlide(index, index > currentIndex ? "next" : "prev")}
-                >
-                  <Image
-                    src={slide.src}
-                    alt={slide.title}
-                    fill
-                    className="object-cover"
+                    placeholder="blur"
+                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDABQODxIPDRQSEBIXFRQdHx4eHRoaHSQtJSEkMjU1LS0yMi4qLjgyPj4+ODU8PkZFRk5PT1VWV1dXV1dXV1f/2wBDAR4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAb/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
                   />
                 </div>
               ))}
@@ -267,6 +262,7 @@ export function NatureSlider() {
         >
           <ChevronLeft className="h-6 w-6" />
         </Button>
+        {/* Auto-play button - temporarily disabled
         <Button
           variant="outline"
           size="icon"
@@ -279,6 +275,7 @@ export function NatureSlider() {
             <Play className="h-6 w-6" />
           )}
         </Button>
+        */}
         <Button
           variant="outline"
           size="icon"
@@ -286,6 +283,18 @@ export function NatureSlider() {
           onClick={nextSlide}
         >
           <ChevronRight className="h-6 w-6" />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          className="bg-white/10 backdrop-blur-sm border-white text-white hover:bg-white/30"
+          onClick={() => setIsCarouselVisible(prev => !prev)}
+        >
+          {isCarouselVisible ? (
+            <EyeOff className="h-6 w-6" />
+          ) : (
+            <Eye className="h-6 w-6" />
+          )}
         </Button>
         <Button
           variant="outline"
